@@ -8,6 +8,7 @@ This plugin supports brightness and temperature control of your Elgato Key Light
 ## Supported lights
 
 - Elgato Ring Light
+- Elgato Key Light
 
 ## Current Features
 
