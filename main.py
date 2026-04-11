@@ -1,16 +1,17 @@
 # Import StreamController modules
-from src.backend.PluginManager.PluginBase import PluginBase
+import os
+
+from src.backend.DeckManagement.InputIdentifier import Input
 from src.backend.PluginManager.ActionHolder import ActionHolder
 from src.backend.PluginManager.ActionInputSupport import ActionInputSupport
-from src.backend.DeckManagement.InputIdentifier import Input
+from src.backend.PluginManager.PluginBase import PluginBase
+
+from .actions.ElgatoKeyLight.Dial import Dial
+from .actions.ElgatoKeyLight.IncreaseDecreaseButton import IncreaseDecreaseButton
 
 # Import actions
 from .actions.ElgatoKeyLight.SetButton import SetButton
-from .actions.ElgatoKeyLight.IncreaseDecreaseButton import IncreaseDecreaseButton
 from .actions.ElgatoKeyLight.ToggleButton import ToggleButton
-from .actions.ElgatoKeyLight.Dial import Dial
-
-import os
 
 
 class PluginTemplate(PluginBase):
@@ -69,6 +70,6 @@ class PluginTemplate(PluginBase):
         self.register(
             plugin_name="Elgato Key Light",
             github_repo="https://github.com/cozybuild/StreamControllerElgatoKeyLight/",
-            plugin_version="0.3.0",
-            app_version="1.1.1-alpha",
+            plugin_version="0.4.0",
+            app_version="1.5.0-beta.13",
         )
