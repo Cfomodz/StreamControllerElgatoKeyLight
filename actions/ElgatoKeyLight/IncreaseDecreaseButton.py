@@ -1,4 +1,5 @@
 # Import StreamController modules
+from gi.repository import Gtk, Adw
 from src.backend.DeckManagement.InputIdentifier import Input, InputEvent
 from enum import Enum
 
@@ -6,13 +7,15 @@ from .Core import Core
 
 # Import gtk modules - used for the config rows
 import gi
+
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Gtk, Adw
+
 
 class AvailableProperty(Enum):
     Brightness = 0
     Temperature = 1
+
 
 class IncreaseDecreaseButton(Core):
     def __init__(self, *args, **kwargs):
@@ -20,7 +23,6 @@ class IncreaseDecreaseButton(Core):
 
         self.selected_step_size = 1
         self.current_dial_selection = 0
-
 
     def on_ready(self) -> None:
         self.load_local_saved_config()
@@ -35,10 +37,15 @@ class IncreaseDecreaseButton(Core):
             self.property_selection.append(property.name)
 
         self.step_size = Adw.SpinRow.new_with_range(-10, 10, 1)
-        self.step_size.set_title(self.plugin_base.locale_manager.get("actions.step_size.title"))
+        self.step_size.set_title(
+            self.plugin_base.locale_manager.get("actions.step_size.title")
+        )
         self.step_size.set_value(self.selected_step_size)
 
-        self.dial_selection = Adw.ComboRow(title=self.plugin_base.locale_manager.get("actions.dial_selection.title"), model=self.property_selection)
+        self.dial_selection = Adw.ComboRow(
+            title=self.plugin_base.locale_manager.get("actions.dial_selection.title"),
+            model=self.property_selection,
+        )
         self.dial_selection.set_selected(self.current_dial_selection)
 
         self.step_size.connect("notify::text", self.on_step_size_changed)
@@ -46,11 +53,9 @@ class IncreaseDecreaseButton(Core):
 
         return parent_entries + [self.dial_selection, self.step_size]
 
-
     def on_step_size_changed(self, spinner: Adw.SpinRow, *args):
         self.selected_step_size = int(self.step_size.get_value())
         self.save_settings()
-
 
     def on_dial_selection_changed(self, spinner: Adw.ComboRow, *args):
         self.current_dial_selection = int(self.dial_selection.get_selected())
@@ -62,7 +67,6 @@ class IncreaseDecreaseButton(Core):
         self.selected_step_size = local_settings.get("step_size") or 1
         self.current_dial_selection = local_settings.get("current_dial_selection") or 0
 
-
     def save_settings(self):
         local_settings = self.get_settings()
 
@@ -73,8 +77,14 @@ class IncreaseDecreaseButton(Core):
     def on_key_down(self) -> None:
         new_value = 0
         new_value = +self.selected_step_size
-        is_brightness = self.current_dial_selection == AvailableProperty.Brightness.value
+        is_brightness = (
+            self.current_dial_selection == AvailableProperty.Brightness.value
+        )
         if is_brightness:
-            self.modify_brightness(new_value)
+            self.set_property(
+                "brightness", max(1, min(self.current_brightness + new_value, 100))
+            )
         else:
-            self.modify_temperature(new_value)
+            self.set_property(
+                "temperature", max(143, min(self.current_temperature + new_value, 344))
+            )
